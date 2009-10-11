@@ -113,7 +113,7 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 		for(KnotStringGraphic sg : strings_graphics) sg.setBounds(new_dims);
 		
 		setBounds(new_dims);
-		setPreferredSize(new_dims.getSize());	
+		setPreferredSize(new_dims.getSize());
 		
 		dirty = true;
 		repaint();
@@ -173,8 +173,9 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 			buffer = new BufferedImage(dimensions.width, dimensions.height, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g2a = buffer.createGraphics();
-			g2a.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+			g2a.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			//g2a.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g2a.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 			
 			paintKnot(g2a);
 			
@@ -201,44 +202,19 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 		KnotsGM.debugMessage("Rendering knot", 2);
 		
 		Graphics2D g2d = (Graphics2D) g;
-		/*g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-		g2d.setPaint(Color.black);
-		GeneralPath p = new GeneralPath();
-		
-		Point st = new Point(115, 115);
-		Point dr = new Point(120, 120);
-		Point en = new Point(125, 115);
-		
-		p.moveTo(100, 100);
-		p.lineTo(st.x, st.y);
-		p.quadTo(dr.x, dr.y, en.x, en.y);
-		
-		p.moveTo(st.x, st.y);
-		p.quadTo((st.x+dr.x)/2, (st.y+dr.y)/2, 0.25D*st.x+0.5D*dr.x+0.25D*en.x, 0.25D*st.y+0.5D*dr.y+0.25D*en.y);
-		p.quadTo((dr.x+en.x)/2, (dr.y+en.y)/2, en.x, en.y);
-		
-		//	0.25D*point.x + 0.5D*drawingPoint.x + 0.25D*next().point.x
-		//	0.25D*point.x + 0.5D*drawingPoint.x + 0.25D*next().point.x
-		
-		g2d.draw(p);*/
-		
-		
 		
 		StringDrawingInfos[] drawinginfos = new StringDrawingInfos[strings_graphics.size()];
 		
 		int i = 0;
 		for (KnotStringGraphic string: strings_graphics)
-		{
-			drawinginfos[i++] = string.getDrawingInfos();
-		}
-		
+			drawinginfos[i++] = string.getDrawingInfos();		
 		
 		for (i = 0; i < drawinginfos.length; i++)
 		{
 			StringDrawingInfos stringDrawingInfos = drawinginfos[i];
 			if(!stringDrawingInfos.style.mode) continue;
-			//g2d.setPaint(stringDrawingInfos.style.getOutsideColor());
-			g2d.setPaint(Color.red);
+			g2d.setPaint(stringDrawingInfos.style.getOutsideColor());
+			//g2d.setPaint(Color.red);
 			g2d.setStroke(new BasicStroke(stringDrawingInfos.style.getOutsideWidth(), 
 					BasicStroke.CAP_ROUND, 
 					BasicStroke.JOIN_MITER));
@@ -275,14 +251,17 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 			g2d.draw(stringDrawingInfos.over);
 		}
 		
-		/*g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-		g2d.setPaint(Color.red);
-		Dimension size = knot.getDimension();
-		g2d.drawRect(0, 0, size.width-1, size.height-1);
-		g2d.drawLine(-20, 0, 20, 0);
-		g2d.drawLine(0, -20, 0, 20);
-		g2d.drawLine(-20, -20, 20, 20);*/
-		
+		/*if(drawing_options.show_debug_infos)
+		{
+			g2d.setPaint(Color.black);
+			g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+			for(ChainPoint p : knot.getStrings().get(0))
+			{
+				KnotPoint point = p.getDrawingPoint();
+				g2d.drawLine((int)point.x-3, (int)point.y-3, (int)point.x+3, (int)point.y+3);
+				g2d.drawLine((int)point.x+3, (int)point.y-3, (int)point.x-3, (int)point.y+3);
+			}
+		}*/
 	}
 	
 	@Override

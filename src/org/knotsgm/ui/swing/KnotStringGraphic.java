@@ -30,7 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ButtonGroup;
@@ -171,7 +171,8 @@ public class KnotStringGraphic extends JComponent implements MouseListener, Acti
 		
 		if (dirty || buffer == null)
 		{
-			dims = string.getBounds();
+			//dims = string.getBounds();
+			dims = drawing_infos.over.getBounds();
 			buffer = new BufferedImage(dims.width+2*margin, dims.height+2*margin, BufferedImage.TYPE_BYTE_BINARY);
 			
 			Graphics2D g2a = buffer.createGraphics();
@@ -206,15 +207,15 @@ public class KnotStringGraphic extends JComponent implements MouseListener, Acti
 	public StringDrawingInfos updateDrawingInfos(KnotString chain)
 	{
 		StringDrawingInfos drawingInfos = new StringDrawingInfos();
-		drawingInfos.over = new GeneralPath();
-		drawingInfos.under = new GeneralPath();
+		drawingInfos.over = new Path2D.Double();
+		drawingInfos.under = new Path2D.Double();
 		drawingInfos.style = drawing_infos.style;
 		
-		GeneralPath overlayer = drawingInfos.over;
-		GeneralPath underlayer = drawingInfos.under;
+		Path2D.Double overlayer = drawingInfos.over;
+		Path2D.Double underlayer = drawingInfos.under;
 		
-		GeneralPath drawOn;
-		GeneralPath prev = null;
+		Path2D.Double drawOn;
+		Path2D.Double prev = null;
 		
 		for(ChainPoint point : chain)
 		{
@@ -238,6 +239,12 @@ public class KnotStringGraphic extends JComponent implements MouseListener, Acti
 			
 			prev = drawOn;
 		}
+		
+		/*AffineTransform trans = new AffineTransform();
+		trans.setToIdentity();
+		trans.scale(2, 2);
+		overlayer.transform(trans);
+		underlayer.transform(trans);*/
 		
 		return drawingInfos;
 		//dirty = false;

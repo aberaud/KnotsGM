@@ -85,6 +85,8 @@ public class Chain extends CircularList<ChainPoint> implements Serializable
 		initset = true;
 		interpolate();
 		interpolate();
+		interpolate();
+		//interpolate();
 		//interpolate();
 		//interpolate();
 	}

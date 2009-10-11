@@ -19,13 +19,13 @@
 
 package org.knotsgm.ui.swing;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 
 import org.knotsgm.core.Style;
 
 public class StringDrawingInfos
 {
-	public GeneralPath over;
-	public GeneralPath under;
+	public Path2D.Double over;
+	public Path2D.Double under;
 	public Style style;
 }

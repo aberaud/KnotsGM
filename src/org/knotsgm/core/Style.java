@@ -40,7 +40,7 @@ public class Style implements Serializable, RepaintListener
 	protected static boolean globalMode = false;
 	
 	private static final Color BACKGROUND_COLOR = Color.white;
-	public static final short DEFAULT_WIDTH = 4;
+	public static final short DEFAULT_WIDTH = 4;//4;
 	public static final Color DEFAULT_COLOR = new Color(0x000000);
 	public static final boolean DEFAULT_MODE = false;
 	
@@ -91,13 +91,13 @@ public class Style implements Serializable, RepaintListener
 	public int getInsideWidth()
 	{
 		if(bold && !(followGlobal?globalMode:mode)) return width+2;
-		return (int)((followGlobal?globalMode:mode)?2*width:width);
+		return (followGlobal?globalMode:mode)?2*width:width;
 	}
 	
 	public int getOutsideWidth()
 	{
 		if(bold && (followGlobal?globalMode:mode)) return 3*width+4;
-		return (int)((followGlobal?globalMode:mode)?3*width:3*width);
+		return (followGlobal?globalMode:mode)?3*width:3*width;
 	}
 	
 	public static void setGlobalMode(boolean b)
@@ -150,7 +150,7 @@ public class Style implements Serializable, RepaintListener
 	{
 		listenerList.add(RepaintListener.class, listener);
 	}
-
+	
 	public void removeRepaintEventListener(RepaintListener listener)
 	{
 		listenerList.remove(RepaintListener.class, listener);
@@ -177,9 +177,9 @@ public class Style implements Serializable, RepaintListener
 			if (listeners[i]==Style.class)
 			{
 				((RepaintListener)listeners[i+1]).needRepaint(evt);
-            }
-        }
-    }
+			}
+		}
+	}
 	
 	public void needRepaint(RepaintEvent evt)
 	{
