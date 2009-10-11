@@ -20,25 +20,15 @@
 package org.knotsgm.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Iterator;
 import java.util.Locale;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -47,13 +37,16 @@ import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.sun.imageio.plugins.jpeg.JPEGImageWriter;
+import org.knotsgm.io.BMPExporter;
+import org.knotsgm.io.JPEGExporter;
+import org.knotsgm.io.KnotExporter;
+import org.knotsgm.io.PNGExporter;
 
 public class ExportDialog extends JDialog implements ActionListener
 {
 	private static final long serialVersionUID = -5639513397599636890L;
 	
-	JComponent export_component;
+	KnotGraphic export_component;
 	
 	JFileChooser chooser;
 	ButtonGroup format_group;
@@ -64,7 +57,7 @@ public class ExportDialog extends JDialog implements ActionListener
 	JSlider quality_slider;
 	JButton save_btn;
 	
-	public ExportDialog(Frame owner, JComponent component)
+	public ExportDialog(Frame owner, KnotGraphic component)
 	{
 		super(owner, "Exporter...", true);
 		
@@ -74,9 +67,9 @@ public class ExportDialog extends JDialog implements ActionListener
 		
 		format_group = new ButtonGroup();
 		
-		jpg_radio = new JRadioButton("jpeg");
-		png_radio = new JRadioButton("png", true);
-		bmp_radio = new JRadioButton("bmp");
+		jpg_radio = new JRadioButton(JPEGExporter.JPEG_EXTENSION);
+		png_radio = new JRadioButton(PNGExporter.PNG_EXTENSION, true);
+		bmp_radio = new JRadioButton(BMPExporter.BMP_EXTENSION);
 		
 		jpg_radio.addActionListener(this);
 		png_radio.addActionListener(this);
@@ -124,9 +117,9 @@ public class ExportDialog extends JDialog implements ActionListener
 	
 	private String getFormatString()
 	{
-		if(jpg_radio.isSelected()) return "jpeg";
-		else if(png_radio.isSelected()) return "png";
-		else if(bmp_radio.isSelected()) return "bmp";
+		if(jpg_radio.isSelected()) return JPEGExporter.JPEG_EXTENSION;
+		else if(png_radio.isSelected()) return PNGExporter.PNG_EXTENSION;
+		else if(bmp_radio.isSelected()) return BMPExporter.BMP_EXTENSION;
 		
 		return "png";
 	}
@@ -154,37 +147,31 @@ public class ExportDialog extends JDialog implements ActionListener
 		{
 			File file = chooser.getSelectedFile();
 			
-			Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(getFormatString());
-			ImageWriter writer = iter.next();
-			ImageWriteParam iwp = writer.getDefaultWriteParam();
+			file = forceFileExtension(file, getFormatString());
 			
-			if(writer instanceof JPEGImageWriter)
-			{
-				iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-				iwp.setCompressionQuality(quality_slider.getValue()/100.f);
-			}
+			KnotExporter exporter = null;
+			if(getFormatString() == JPEGExporter.JPEG_EXTENSION)
+				exporter = new JPEGExporter(quality_slider.getValue()/100.f);
+			else if(getFormatString() == PNGExporter.PNG_EXTENSION)
+				exporter = new PNGExporter();
+			else if(getFormatString() == BMPExporter.BMP_EXTENSION)
+				exporter = new BMPExporter();
 			
-			FileImageOutputStream output = new FileImageOutputStream(file);
-			writer.setOutput(output);
-			
-			BufferedImage tamponSauvegarde = new BufferedImage(export_component.getPreferredSize().width, export_component.getPreferredSize().height, BufferedImage.TYPE_3BYTE_BGR);
-			
-			Graphics g = tamponSauvegarde.getGraphics();
-			g.setColor(Color.WHITE);
-			g.fillRect(0, 0, export_component.getPreferredSize().width, export_component.getPreferredSize().height);
-			export_component.paint(g); 
-			
-			IIOImage image = new IIOImage(tamponSauvegarde, null, null);
-			writer.write(null, image, iwp);
-			writer.dispose();
-			output.flush();
-			output.close();
+			exporter.exportKnot(export_component, file);
 			dispose();
-			
 		}
 		catch (Exception exception) {
 			KnotsGM.debugMessage("Can't write to file", 1);
 		}
-		
+	}
+	
+	private File forceFileExtension(File file, String extention)
+	{
+		if(file.exists()) return file;
+		String name = file.getName();
+		String[] names = name.split(".");
+		if(names.length == 0)
+			return new File(file.getParentFile(), name+"."+extention);
+		return file;
 	}
 }

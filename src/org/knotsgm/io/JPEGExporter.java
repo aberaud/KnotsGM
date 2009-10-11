@@ -8,6 +8,8 @@ import javax.imageio.ImageWriter;
 
 public final class JPEGExporter extends BitmapExporter
 {
+	public static final String JPEG_EXTENSION = "jpeg";
+	
 	ImageWriter writer;
 	ImageWriteParam iwp;
 	

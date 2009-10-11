@@ -13,6 +13,7 @@ import org.knotsgm.core.Intersection;
 import org.knotsgm.core.Knot;
 import org.knotsgm.core.KnotString;
 import org.knotsgm.core.KnotStringBase;
+import org.knotsgm.ui.swing.KnotGraphic;
 
 public final class KVGExporter extends KVGManipulator  implements KnotExporter
 {
@@ -42,6 +43,12 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Override
+	public void exportKnot(KnotGraphic knot, File file)
+	{
+		exportKnot(knot.getKnot(), file);
 	}
 	
 	private String getDocumentXML(Knot knot)
@@ -142,4 +149,6 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 		for(; num>0; num--) newline += TAB_CHAR;
 		return newline;
 	}
+	
+	
 }

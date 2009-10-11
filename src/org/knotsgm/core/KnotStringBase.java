@@ -20,6 +20,7 @@
 package org.knotsgm.core;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
 
@@ -72,6 +73,8 @@ public abstract class KnotStringBase extends Chain
 		
 		getIntersections(newi);
 		string.getIntersections(newi);
+		
+		
 		
 		return newi;
 	}
@@ -128,7 +131,7 @@ public abstract class KnotStringBase extends Chain
 	{
 		Rectangle rect = new Rectangle(0, 0, -1, -1);
 		for (ChainPoint i : this)
-			rect.add(i.getPoint());
+			rect.add(new Point((int)i.x(), (int)i.y()));
 		bounds = rect;
 	}
 	
