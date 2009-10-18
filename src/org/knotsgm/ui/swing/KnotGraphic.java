@@ -30,6 +30,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -49,8 +50,8 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 	private static final long serialVersionUID = 3848667061384485390L;
 	
 	private Knot knot;
-	private Vector<KnotStringGraphic> strings_graphics = new Vector<KnotStringGraphic>();
-	private Vector<IntersectionChanger> intersections_changers = new Vector<IntersectionChanger>();
+	private ArrayList<KnotStringGraphic> strings_graphics = new ArrayList<KnotStringGraphic>();
+	private ArrayList<IntersectionChanger> intersections_changers = new ArrayList<IntersectionChanger>();
 	
 	private BufferedImage buffer;
 	private boolean dirty = true;
@@ -95,6 +96,11 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 	public Knot getKnot()
 	{
 		return knot;
+	}
+	
+	public ArrayList<KnotStringGraphic> getStrings()
+	{
+		return strings_graphics;
 	}
 	
 	public void addString(KnotString string)
@@ -209,6 +215,7 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 		for (KnotStringGraphic string: strings_graphics)
 			drawinginfos[i++] = string.getDrawingInfos();		
 		
+		//White under the knot
 		for (i = 0; i < drawinginfos.length; i++)
 		{
 			StringDrawingInfos stringDrawingInfos = drawinginfos[i];
@@ -225,6 +232,7 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 		{
 			StringDrawingInfos stringDrawingInfos = drawinginfos[i];
 			g2d.setPaint(stringDrawingInfos.style.getInsideColor());
+			//g2d.setPaint(Color.black);
 			g2d.setStroke(new BasicStroke(stringDrawingInfos.style.getInsideWidth(), 
 					BasicStroke.CAP_ROUND, 
 					BasicStroke.JOIN_MITER));
@@ -235,6 +243,7 @@ public class KnotGraphic extends JComponent implements RepaintListener, RepaintE
 		{
 			StringDrawingInfos stringDrawingInfos = drawinginfos[i];
 			g2d.setPaint(stringDrawingInfos.style.getOutsideColor());
+			//g2d.setPaint(Color.green);
 			g2d.setStroke(new BasicStroke(stringDrawingInfos.style.getOutsideWidth(), 
 					BasicStroke.CAP_BUTT, 
 					BasicStroke.JOIN_MITER));

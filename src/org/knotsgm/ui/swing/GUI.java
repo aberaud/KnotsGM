@@ -210,6 +210,7 @@ public class GUI extends JPanel implements ActionListener, KnotManagerEventListe
 			try
 			{
 				Knot knot = importer.importKnot(file);
+				
 				newstring_btn.setEnabled(true);
 				newdoc_btn.setEnabled(true);
 				knotmanager.stopDrawing();
@@ -230,11 +231,11 @@ public class GUI extends JPanel implements ActionListener, KnotManagerEventListe
 			if(returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 			else return;
+			file = forceFileExtension(file, "kvg");
 			
 			KnotGraphic knot_graphic = knotmanager.getKnots().get(0);
-			Knot knot = knot_graphic.getKnot();
 			KVGExporter exporter = new KVGExporter();
-			exporter.exportKnot(knot, file);
+			exporter.exportKnot(knot_graphic, file);
 		}
 		else if(source == exit_button)
 		{
@@ -309,4 +310,13 @@ public class GUI extends JPanel implements ActionListener, KnotManagerEventListe
 		}
 	}
 	
+	private File forceFileExtension(File file, String extention)
+	{
+		if(file.exists()) return file;
+		String name = file.getName();
+		String[] names = name.split(".");
+		if(names.length == 0)
+			return new File(file.getParentFile(), name+"."+extention);
+		return file;
+	}
 }

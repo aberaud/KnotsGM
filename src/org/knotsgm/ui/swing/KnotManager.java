@@ -98,7 +98,7 @@ public class KnotManager extends JPanel implements RepaintListener
 		repaint();
 	}
 	
-	public void addKnot(Knot newknot)
+	public KnotGraphic addKnot(Knot newknot)
 	{
 		KnotsGM.debugMessage("Nouveau noeud", 1);
 		KnotGraphic knot_graphic = new KnotGraphic(newknot);
@@ -110,6 +110,7 @@ public class KnotManager extends JPanel implements RepaintListener
 		setComponentZOrder(knot_graphic, 0);
 		current_knot = knot_graphic;
 		repaint();
+		return knot_graphic;
 	}
 	
 	

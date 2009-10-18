@@ -41,6 +41,7 @@ public class Chain extends CircularList<ChainPoint> implements Serializable
 	
 	public Chain()
 	{
+		
 	}
 	
 	/**

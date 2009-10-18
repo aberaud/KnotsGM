@@ -12,19 +12,20 @@ import org.knotsgm.core.ChainPoint;
 import org.knotsgm.core.Intersection;
 import org.knotsgm.core.Knot;
 import org.knotsgm.core.KnotString;
-import org.knotsgm.core.KnotStringBase;
+import org.knotsgm.core.Style;
 import org.knotsgm.ui.swing.KnotGraphic;
+import org.knotsgm.ui.swing.KnotStringGraphic;
 
-public final class KVGExporter extends KVGManipulator  implements KnotExporter
+public final class KVGExporter extends KVGManipulator implements KnotExporter
 {
 	private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 	private static final String NL_CHAR = "\n";
 	private static final String TAB_CHAR = "\t";
 	
 	@Override
-	public void exportKnot(Knot knot, File file)
+	public void exportKnot(KnotGraphic knotg, File file)
 	{
-		String document_xml = getDocumentXML(knot);
+		String document_xml = getDocumentXML(knotg);
 		if(file.exists()) file.delete();
 		
 		Writer output;
@@ -45,25 +46,29 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 		
 	}
 	
-	@Override
+	/*@Override
 	public void exportKnot(KnotGraphic knot, File file)
 	{
 		exportKnot(knot.getKnot(), file);
-	}
+	}*/
 	
-	private String getDocumentXML(Knot knot)
+	private String getDocumentXML(KnotGraphic knot)
 	{
 		String document = "";
 		document += XML_DECLARATION;
 		document += newline(0) + getTag(KVG_TAG + getAttribute("version", KVG_VERSION), false);
+		document += newline(1);
+		document += getGlobalStyleXML(new Style(), 1);
+		document += newline(1);
 		document += getKnotXML(knot, 1);
 		document += newline(0) + getTag(KVG_TAG, true);
 		document += newline(0) + newline(0);
 		return document;
 	}
 	
-	private String getKnotXML(Knot knot, int ind)
+	private String getKnotXML(KnotGraphic knotg, int ind)
 	{
+		Knot knot = knotg.getKnot();
 		String knotstr = "";
 		knotstr += newline(ind) + getTag(KNOT_TAG, false);
 		
@@ -72,11 +77,21 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 		
 		knotstr += newline(ind);
 		
-		for(KnotStringBase string : knot.getStrings())
-			knotstr += getStringXML((KnotString)string, ind+1);
+		for(KnotStringGraphic string : knotg.getStrings())
+			knotstr += getStringXML(string, ind+1);
 		
 		knotstr += newline(ind) + getTag(KNOT_TAG, true);
 		return knotstr;
+	}
+	
+	private String getGlobalStyleXML(Style style, int ind)
+	{
+		String content = "";
+		content += newline(ind+1) + "string {";
+		content += newline(ind+2) + getCSSProperty("type", style.getMode()?"inside":"outside");
+		content += newline(ind+1) + "}";
+		
+		return newline(ind) + getTag("style" + getAttribute("type", "text/css"), false)+getCDATAProtection(content, ind)+getTag("style", true);
 	}
 	
 	private String getIntersectionXML(Intersection intersection, int ind)
@@ -88,10 +103,16 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 				+ getAttribute("polarity", intersection.getPolarity()?"true":"false"));
 	}
 	
-	private String getStringXML(KnotString string, int ind)
+	private String getStringXML(KnotStringGraphic stringg, int ind)
 	{
+		KnotString string = stringg.getString();
 		String stringstr = "";
-		stringstr += newline(ind) + getTag(STRING_TAG, false);
+		String style_propreties = "";
+		Style style = stringg.getStyle();
+		if(!style.followGlobal) style_propreties += getCSSProperty("style", style.mode?"inside":"outside");
+		style_propreties += getCSSProperty("stroke", "0x"+Integer.toHexString(style.color.getRGB()));
+		
+		stringstr += newline(ind) + getTag(STRING_TAG + getAttribute("style", style_propreties), false);
 		
 		ChainPoint point = string.getFirst();
 		ChainPoint first;
@@ -141,6 +162,16 @@ public final class KVGExporter extends KVGManipulator  implements KnotExporter
 	private String getAttribute(String name, String value)
 	{
 		return " " + name + "=\"" + value + "\"";
+	}
+	
+	private String getCSSProperty(String name, String value)
+	{
+		return name + ": " + value + ";";
+	}
+	
+	private String getCDATAProtection(String content, int ind)
+	{
+		return "<![CDATA[" + content + newline(ind) + "]]>";
 	}
 	
 	private String newline(int num)

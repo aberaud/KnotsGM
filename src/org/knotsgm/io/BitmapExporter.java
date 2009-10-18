@@ -12,7 +12,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 
-import org.knotsgm.core.Knot;
 import org.knotsgm.ui.swing.KnotGraphic;
 
 public abstract class BitmapExporter implements KnotExporter, BitmapImageExporter
@@ -41,10 +40,10 @@ public abstract class BitmapExporter implements KnotExporter, BitmapImageExporte
 		output.close();	
 	}
 	
-	@Override
+	/*@Override
 	public void exportKnot(Knot knot, File file)
 	{
 		
-	}
+	}*/
 	
 }

@@ -346,4 +346,9 @@ public class KnotStringGraphic extends JComponent implements MouseListener, Acti
 		}
 	}
 	
+	public Style getStyle()
+	{
+		return drawing_infos.style;
+	}
+	
 }

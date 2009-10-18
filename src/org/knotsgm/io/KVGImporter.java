@@ -97,6 +97,9 @@ public class KVGImporter extends KVGManipulator implements KnotImporter
 		for(KnotStringBase s : knot.getStrings())
 			s.refreshIntersections();
 		
+		/*for(Intersection i : interc.values())
+			i.setupSegments();*/
+		
 		knot.refreshIntersections();
 		
 		return knot;

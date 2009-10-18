@@ -107,6 +107,11 @@ public class Style implements Serializable, RepaintListener
 		dispatchStyleNeedRepaint(new RepaintEvent());
 	}
 	
+	public boolean getMode()
+	{
+		return followGlobal?globalMode:mode;
+	}
+	
 	/**
 	 * Generates a random Color with brightness between min and max
 	 * @param min Minimum brightness of the generated color
